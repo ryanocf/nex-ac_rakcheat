@@ -2539,11 +2539,11 @@ stock acc_EnableStuntBonusForPlayer(playerid, enable)
 #endif
 #define EnableStuntBonusForPlayer acc_EnableStuntBonusForPlayer
 
-stock orig_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]) return ShowPlayerDialog(playerid, dialogid, style, caption, info, button1, button2);
+stock orig_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const title[], const body[], const button1[], const button2[], OPEN_MP_TAGS:...) return ShowPlayerDialog(playerid, dialogid, style, title, body, button1, button2, va_start<7>);
 
-stock acc_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[])
+stock acc_ShowPlayerDialog(playerid, dialogid, DIALOG_STYLE:style, const title[], const body[], const button1[], const button2[], OPEN_MP_TAGS:...)
 {
-	if(ShowPlayerDialog(playerid, dialogid, style, caption, info, button1, button2))
+	if(ShowPlayerDialog(playerid, dialogid, style, title, body, button1, button2, va_start<7>))
 	{
 		#if defined FILTERSCRIPT
 			return CallRemoteFunction("ac_ShowPlayerDialog", "idi", playerid, dialogid, true);
@@ -4216,7 +4216,7 @@ public OnPlayerSpawn(playerid)
 	#endif
 #endif
 
-public OnPlayerDeath(playerid, killerid, reason)
+public OnPlayerDeath(playerid, killerid, WEAPON:reason)
 {
 	if(ACInfo[playerid][acKicked] > 0) return 0;
 	#if AC_USE_NPC
@@ -4264,18 +4264,18 @@ public OnPlayerDeath(playerid, killerid, reason)
 #endif
 #if defined _INC_y_prehook
 	#define OnPlayerDeath(%0) CHAIN_PUBLIC:AC_OnPlayerDeath(%0)
-	CHAIN_FORWARD:AC_OnPlayerDeath(playerid, killerid, reason) = 1;
+	CHAIN_FORWARD:AC_OnPlayerDeath(playerid, killerid, WEAPON:reason) = 1;
 #else
 	#define OnPlayerDeath ac_OnPlayerDeath
 	#if defined ac_OnPlayerDeath
-		forward ac_OnPlayerDeath(playerid, killerid, reason);
+		forward ac_OnPlayerDeath(playerid, killerid, WEAPON:reason);
 	#endif
 #endif
 
 #if defined OnPlayerWeaponShot
-	public OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
+	public OnPlayerTakeDamage(playerid, issuerid, Float:amount, WEAPON:weaponid, bodypart)
 #else
-	public OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid)
+	public OnPlayerTakeDamage(playerid, issuerid, Float:amount, WEAPON:weaponid)
 #endif
 {
 	if(ACInfo[playerid][acKicked] > 0) return 1;
@@ -4322,16 +4322,16 @@ public OnPlayerDeath(playerid, killerid, reason)
 #define OnPlayerTakeDamage ac_OnPlayerTakeDamage
 #if defined ac_OnPlayerTakeDamage
 	#if defined OnPlayerWeaponShot
-		forward ac_OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart);
+		forward ac_OnPlayerTakeDamage(playerid, issuerid, Float:amount, WEAPON:weaponid, bodypart);
 	#else
-		forward ac_OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid);
+		forward ac_OnPlayerTakeDamage(playerid, issuerid, Float:amount, WEAPON:weaponid);
 	#endif
 #endif
 
 #if defined OnPlayerWeaponShot
-	public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
+	public OnPlayerGiveDamage(playerid, damagedid, Float:amount, WEAPON:weaponid, bodypart)
 #else
-	public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid)
+	public OnPlayerGiveDamage(playerid, damagedid, Float:amount, WEAPON:weaponid)
 #endif
 {
 	if(ACInfo[playerid][acKicked] > 0) return 1;
@@ -4400,9 +4400,9 @@ public OnPlayerDeath(playerid, killerid, reason)
 #define OnPlayerGiveDamage ac_OnPlayerGiveDamage
 #if defined ac_OnPlayerGiveDamage
 	#if defined OnPlayerWeaponShot
-		forward ac_OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart);
+		forward ac_OnPlayerGiveDamage(playerid, damagedid, Float:amount, WEAPON:weaponid, bodypart);
 	#else
-		forward ac_OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid);
+		forward ac_OnPlayerGiveDamage(playerid, damagedid, Float:amount, WEAPON:weaponid);
 	#endif
 #endif
 
@@ -6177,7 +6177,7 @@ public OnPlayerUpdate(playerid)
 	#endif
 #endif
 
-public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+public OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys)
 {
 	if(ACInfo[playerid][acKicked] > 0) return 0;
 	#if AC_USE_NPC
@@ -6214,7 +6214,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 #endif
 #define OnPlayerKeyStateChange ac_OnPlayerKeyStateChange
 #if defined ac_OnPlayerKeyStateChange
-	forward ac_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+	forward ac_OnPlayerKeyStateChange(playerid, KEY:newkeys, KEY:oldkeys);
 #endif
 
 public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ)
@@ -6245,7 +6245,7 @@ public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ)
 	forward ac_OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ);
 #endif
 
-public OnPlayerClickPlayer(playerid, clickedplayerid, source)
+public OnPlayerClickPlayer(playerid, clickedplayerid, CLICK_SOURCE:source)
 {
 	if(ACInfo[playerid][acKicked] > 0) return 1;
 	new ac_gtc = GetTickCount();
@@ -6274,7 +6274,7 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 #endif
 #define OnPlayerClickPlayer ac_OnPlayerClickPlayer
 #if defined ac_OnPlayerClickPlayer
-	forward ac_OnPlayerClickPlayer(playerid, clickedplayerid, source);
+	forward ac_OnPlayerClickPlayer(playerid, clickedplayerid, CLICK_SOURCE:source);
 #endif
 
 #if defined OnPlayerClickTextDraw
@@ -6788,7 +6788,7 @@ public OnPlayerSelectedMenuRow(playerid, row)
 	forward ac_OnPlayerSelectedMenuRow(playerid, row);
 #endif
 
-public OnPlayerStateChange(playerid, newstate, oldstate)
+public OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate)
 {
 	if(ACInfo[playerid][acKicked] > 0) return 0;
 	#if AC_USE_NPC
@@ -7105,16 +7105,16 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 #endif
 #if defined _INC_y_prehook
 	#define OnPlayerStateChange(%0) CHAIN_PUBLIC:AC_OnPlayerStateChange(%0)
-	CHAIN_FORWARD:AC_OnPlayerStateChange(playerid, newstate, oldstate) = 1;
+	CHAIN_FORWARD:AC_OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate) = 1;
 #else
 	#define OnPlayerStateChange ac_OnPlayerStateChange
 	#if defined ac_OnPlayerStateChange
-		forward ac_OnPlayerStateChange(playerid, newstate, oldstate);
+		forward ac_OnPlayerStateChange(playerid, PLAYER_STATE:newstate, PLAYER_STATE:oldstate);
 	#endif
 #endif
 
 #if defined OnPlayerWeaponShot
-	public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ)
+	public OnPlayerWeaponShot(playerid, WEAPON:weaponid, BULLET_HIT_TYPE:hittype, hitid, Float:fX, Float:fY, Float:fZ)
 	{
 		#if defined IsPlayerDying
 			if(ACInfo[playerid][acKicked] > 0 || IsPlayerDying(playerid)) return 0;
@@ -7553,11 +7553,11 @@ public OnPlayerStateChange(playerid, newstate, oldstate)
 	#endif
 	#if defined _INC_y_prehook
 		#define OnPlayerWeaponShot(%0) CHAIN_PUBLIC:AC_OnPlayerWeaponShot(%0)
-		CHAIN_FORWARD:AC_OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ) = 1;
+		CHAIN_FORWARD:AC_OnPlayerWeaponShot(playerid, WEAPON:weaponid, BULLET_HIT_TYPE:hittype, hitid, Float:fX, Float:fY, Float:fZ) = 1;
 	#else
 		#define OnPlayerWeaponShot ac_OnPlayerWeaponShot
 		#if defined ac_OnPlayerWeaponShot
-			forward ac_OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ);
+			forward ac_OnPlayerWeaponShot(playerid, WEAPON:weaponid, BULLET_HIT_TYPE:hittype, hitid, Float:fX, Float:fY, Float:fZ);
 		#endif
 	#endif
 #endif
@@ -8303,7 +8303,7 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 #endif
 
 #if defined OnPlayerSelectObject
-	public OnPlayerSelectObject(playerid, type, objectid, modelid, Float:fX, Float:fY, Float:fZ)
+	public OnPlayerSelectObject(playerid, SELECT_OBJECT:type, objectid, modelid, Float:fX, Float:fY, Float:fZ)
 	{
 		if(ACInfo[playerid][acKicked] > 0) return 1;
 		new ac_i = GetTickCount();
@@ -8348,7 +8348,7 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 	#endif
 	#define OnPlayerSelectObject ac_OnPlayerSelectObject
 	#if defined ac_OnPlayerSelectObject
-		forward ac_OnPlayerSelectObject(playerid, type, objectid, modelid, Float:fX, Float:fY, Float:fZ);
+		forward ac_OnPlayerSelectObject(playerid, SELECT_OBJECT:type, objectid, modelid, Float:fX, Float:fY, Float:fZ);
 	#endif
 #endif
 
@@ -8748,7 +8748,7 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 #endif
 
 #if defined OnPlayerGiveDamageActor
-	public OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, weaponid, bodypart)
+	public OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, WEAPON:weaponid, bodypart)
 	{
 		if(ACInfo[playerid][acKicked] > 0) return 1;
 		if(ACInfo[playerid][acACAllow][47] &&
@@ -8775,12 +8775,12 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 	#endif
 	#define OnPlayerGiveDamageActor ac_OnPlayerGiveDamageActor
 	#if defined ac_OnPlayerGiveDamageActor
-		forward ac_OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, weaponid, bodypart);
+		forward ac_OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, WEAPON:weaponid, bodypart);
 	#endif
 #endif
 
 #if defined OnPlayerEditAttachedObject
-	public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
+	public OnPlayerEditAttachedObject(playerid, EDIT_RESPONSE:response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
 	{
 		if(ACInfo[playerid][acKicked] > 0) return 1;
 		if(ACInfo[playerid][acACAllow][46] && (ac_IsBrokenObjectModel(modelid) || !(0 <= index <= 9) || !(1 <= boneid <= 18)))
@@ -8805,7 +8805,7 @@ public OnVehicleStreamIn(vehicleid, forplayerid)
 	#endif
 	#define OnPlayerEditAttachedObject ac_OnPlayerEditAttachedObject
 	#if defined ac_OnPlayerEditAttachedObject
-		forward ac_OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ);
+		forward ac_OnPlayerEditAttachedObject(playerid, EDIT_RESPONSE:response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ);
 	#endif
 #endif
 
@@ -10222,7 +10222,7 @@ ac_fpublic ac_Timer(playerid)
 #if !defined OnCheatDetected
 	//Don't make changes in this public
 	//To customize punishments, declare 'OnCheatDetected' in your script
-	ac_fpublic ac_OnCheatDetected(playerid, ip_address[], type, code)
+	ac_fpublic ac_OnCheatDetected(playerid, type, code, string:ip_address[])
 	{
 		if(type)
 		{
@@ -10725,9 +10725,10 @@ static ac_KickWithCode(playerid, ip_address[], type, code, code2 = 0)
 		else printf(SUSPICION_1, playerid, code, ac_strtmp);
 	#endif
 	#if defined OnCheatDetected
-		OnCheatDetected(playerid, ip_address, type, code, code2);
+		// y_hooks compatibility
+		CallLocalFunction("OnCheatDetected", "iiiis", playerid, type, code, code2, ip_address);
 	#else
-		ac_OnCheatDetected(playerid, ip_address, type, code);
+		ac_OnCheatDetected(playerid, type, code, ip_address);
 	#endif
 	return 0;
 }
